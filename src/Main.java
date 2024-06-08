@@ -1,7 +1,7 @@
 import java.lang.Math;
 public class Main {
-    public static void main(String[] args) {
-        System.out.println(evaluateExpression(""));
+    public static void main(String[] args) {    
+        System.out.println(evaluateExpression("5 * ( 16 + 4 ) - ( 100 / 4 )"));
 
     }
     public static String evaluateExpression(String expression){
@@ -11,11 +11,15 @@ public class Main {
 
         for (String token: arr){
             if (isNumber(token)){
-                System.out.println("Number token: " + token);
                 valueStack.push(token);
             }
+            else if (token.equals("(")){
+                opStack.push(token);
+            }
+            else if (token.equals(")")){
+                repeatOperations(")", valueStack, opStack);
+            }
             else{
-                System.out.println("Operation token: " + token);
                 repeatOperations(token, valueStack, opStack);
                 opStack.push(token);
             }
@@ -24,17 +28,19 @@ public class Main {
         return valueStack.pop();
     }
 
-    /*
-     * Edge-cases:
-     *
-     */
     private static void repeatOperations(String operation, NumberStack valueStack, OperatorStack operatorStack){
-        while (valueStack.getSize() > 1 && precedence(operation) >= precedence(operatorStack.top())){
-            System.out.println("Got in.");
-            doOperation(valueStack, operatorStack);
+        if (operation.equals(")")){
+            while(valueStack.getSize() > 1 && !operatorStack.top().equals("(")){
+                doOperation(valueStack, operatorStack);
+            }
+            operatorStack.pop();
+        }
+        else{
+            while (valueStack.getSize() > 1 && precedence(operation) >= precedence(operatorStack.top()) && !operatorStack.top().equals("(")){
+                doOperation(valueStack, operatorStack);
+            }
         }
     }
-    // 1 +
 
     private static void doOperation(NumberStack valueStack, OperatorStack operatorStack){
         String x = valueStack.pop();
