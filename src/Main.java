@@ -1,15 +1,13 @@
 import java.lang.Math;
 public class Main {
     public static void main(String[] args) {
-        System.out.println(evaluateExpression("2+2*4+4"));
-        //2*4 = 8
-        //8+2 + 4 = 14
-    }
+        System.out.println(evaluateExpression(""));
 
+    }
     public static String evaluateExpression(String expression){
         OperatorStack opStack = new OperatorStack();
         NumberStack valueStack = new NumberStack();
-        String[] arr = expression.split("");
+        String[] arr = expression.split(" ");
 
         for (String token: arr){
             if (isNumber(token)){
@@ -26,10 +24,13 @@ public class Main {
         return valueStack.pop();
     }
 
+    /*
+     * Edge-cases:
+     *
+     */
     private static void repeatOperations(String operation, NumberStack valueStack, OperatorStack operatorStack){
-        System.out.println(valueStack.getSize() > 1);
-        System.out.println(precedence(operation) >= precedence(operatorStack.top()));
         while (valueStack.getSize() > 1 && precedence(operation) >= precedence(operatorStack.top())){
+            System.out.println("Got in.");
             doOperation(valueStack, operatorStack);
         }
     }
@@ -42,6 +43,8 @@ public class Main {
         double y1 = Double.parseDouble(y);
         String operator = operatorStack.pop();
         double answer = 0;
+        boolean booleanAnswer = false;
+        boolean booleanOrNumber = false;
         switch(operator){
             case "^":
                 answer = Math.pow(y1,x1);
@@ -58,8 +61,37 @@ public class Main {
             case "/":
                 answer = y1 / x1;
                 break;
-        }
-        valueStack.push("" + answer);
+            case "==":
+                booleanAnswer = y1 == x1;
+                booleanOrNumber = true;
+                break;
+            case "!=":
+                booleanAnswer = y1 != x1;
+                booleanOrNumber = true;
+                break;
+            case ">":
+                booleanAnswer = y1 > x1;
+                booleanOrNumber = true;
+                break;
+            case "<":
+                booleanAnswer = y1 < x1;
+                booleanOrNumber = true;
+                break;
+            case ">=":
+                booleanAnswer = y1 >= x1;
+                booleanOrNumber = true;
+                break;
+            case "<=":
+                booleanAnswer = y1 <= x1;
+                booleanOrNumber = true;
+                break;
+            }
+            if (booleanOrNumber){
+                valueStack.push("" + booleanAnswer);
+            }
+            else{
+                valueStack.push("" + answer);
+            }
     }
 
     private static boolean isNumber(String s1){
@@ -75,7 +107,7 @@ public class Main {
         if (op == null){
             return -1;
         }
-        if (op.equals("(") || op.equals(")")){
+        else if (op.equals("(") || op.equals(")")){
             return 1;
         }
         else if(op.equals("^")) {
