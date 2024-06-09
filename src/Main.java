@@ -1,9 +1,28 @@
+import java.io.*;
 import java.lang.Math;
+import java.util.Scanner;
 public class Main {
-    public static void main(String[] args) {    
-        System.out.println(evaluateExpression("5 * ( 16 + 4 ) - ( 100 / 4 )"));
+    public static void main(String[] args) {
+        Scanner readExpression = null;
+        try{
+            readExpression = new Scanner(new FileInputStream("input.txt"));
+            String s1 = readExpression.nextLine();
+        }
+        catch(FileNotFoundException e){
+            System.out.println(e.getMessage());
+        }
+
 
     }
+
+    /**
+     * Method that will evaluate a mathematical expression given as a String, the String will be split up as tokens separated by a space.
+     * Method will separate each token into a value stack or an operator stack.
+     * If it is an operator, will also call repeatOperations function UNLESS it is an opening parenthesis.
+     *
+     * @param expression represents the mathematical expression to be evaluated
+     * @return the answer of the mathematical expression as a string.
+     */
     public static String evaluateExpression(String expression){
         OperatorStack opStack = new OperatorStack();
         NumberStack valueStack = new NumberStack();
@@ -28,20 +47,36 @@ public class Main {
         return valueStack.pop();
     }
 
-    private static void repeatOperations(String operation, NumberStack valueStack, OperatorStack operatorStack){
-        if (operation.equals(")")){
+    /**
+     * Method will call doOperation method if the given operator has a smaller precedence than the top operator in the operator stack OR
+     * if the given operator is a closing parenthesis ) , in which case all operation will be performed until an opening parenthesis ( is met.
+     * Will only call doOperation if there are more than to operands in the valueStack
+     *
+     * @param operator is the operator given as a String value
+     * @param valueStack Stack containing the operands
+     * @param operatorStack Stack containing the operators
+     */
+    private static void repeatOperations(String operator, NumberStack valueStack, OperatorStack operatorStack){
+        if (operator.equals(")")){
             while(valueStack.getSize() > 1 && !operatorStack.top().equals("(")){
                 doOperation(valueStack, operatorStack);
-            }
+            } // (5 * 2
             operatorStack.pop();
         }
         else{
-            while (valueStack.getSize() > 1 && precedence(operation) >= precedence(operatorStack.top()) && !operatorStack.top().equals("(")){
+            while (valueStack.getSize() > 1 && precedence(operator) >= precedence(operatorStack.top()) && !operatorStack.top().equals("(")){
                 doOperation(valueStack, operatorStack);
             }
         }
     }
 
+    /**
+     * Method will perform the operation specified at the top of operator Stack with the two up-most number values of the value stack
+     * and will append the value of the operation back into the value stack.
+     *
+     * @param valueStack Stack containing the operands
+     * @param operatorStack Stack containing the operators
+     */
     private static void doOperation(NumberStack valueStack, OperatorStack operatorStack){
         String x = valueStack.pop();
         String y = valueStack.pop();
@@ -83,11 +118,11 @@ public class Main {
                 booleanAnswer = y1 < x1;
                 booleanOrNumber = true;
                 break;
-            case ">=":
+            case "≥":
                 booleanAnswer = y1 >= x1;
                 booleanOrNumber = true;
                 break;
-            case "<=":
+            case "≤":
                 booleanAnswer = y1 <= x1;
                 booleanOrNumber = true;
                 break;
@@ -100,15 +135,27 @@ public class Main {
             }
     }
 
+    /**
+     * Method that verifies if a String is a valid integer or not.
+     *
+     * @param s1 String sequence that needs to be checked.
+     * @return boolean value whether argument is a number or not.
+     */
     private static boolean isNumber(String s1){
         try{
-            int number = Integer.parseInt(s1);
+            Integer.parseInt(s1);
             return true;
         } catch(NumberFormatException e){
             return false;
         }
     }
 
+    /**
+     * Method that returns the precedence of the operator
+     *
+     * @param op represents the operator that we want to get the precedence of.
+     * @return Integer value representing precedence of operator.
+     */
     public static int precedence(String op){
         if (op == null){
             return -1;
@@ -135,10 +182,5 @@ public class Main {
             return 7;
         }
     }
-
-    //If closing parenthesis encountered push (value.pop OP value.POP)
-    
-
-
 }
 

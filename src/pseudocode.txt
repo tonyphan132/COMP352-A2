@@ -1,0 +1,44 @@
+evaluateExpression(String expression):
+
+	for every token in expression:
+
+		if token is a number:
+			then append to value stack
+
+		else: 
+			call repeatOperations(token)
+			if token is not ")":
+				append token to operator stack
+
+		
+	call repeatOperations("$")
+	return answer from value stack	
+
+
+
+repeatOperations(String operator):
+
+	if operator is ")":
+		while top of operator stack != "(":
+			call doOperation
+
+	pop the top of operator stack
+
+		
+	else
+		while valueStack is greater than 1 AND precedence of Operator >= precedence of operatorStack.top() AND top of operator 		stack != "("
+
+			call doOperation
+
+
+doOperation():
+	operand1 = valueStack.pop()
+	operand2 = valueStack.pop()
+	operator = operatorStack.pop();
+	return operand2 operator operand1
+		
+		
+					
+			
+
+

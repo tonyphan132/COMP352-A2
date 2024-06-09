@@ -16,9 +16,6 @@ public class OperatorStack {
             resize();
         }
     }
-
-
-
     public String pop(){
         if (currentIndex == 0){
             return null;
@@ -27,7 +24,6 @@ public class OperatorStack {
         operatorStack[currentIndex] = null;
         return returnChar;
     }
-
     private void resize(){
         String[] tempStack = new String[operatorStack.length * 2];
         for (int i = 0; i < currentIndex; i++){
@@ -35,7 +31,6 @@ public class OperatorStack {
         }
         operatorStack = tempStack;
     }
-
     public String top(){
         if (currentIndex == 0){
             return null;
